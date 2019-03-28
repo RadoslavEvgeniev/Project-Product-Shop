@@ -3,7 +3,6 @@ package org.softuni.productshop.domain.models.view;
 import java.math.BigDecimal;
 
 public class ProductDetailsViewModel {
-
     private String id;
     private String name;
     private String description;
