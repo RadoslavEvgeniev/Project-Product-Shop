@@ -11,7 +11,6 @@ import org.softuni.productshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -56,7 +55,7 @@ public class ProductController extends BaseController {
                 this.cloudinaryService.uploadImage(model.getImage())
         );
 
-        this.productService.addProduct(productServiceModel);
+        this.productService.createProduct(productServiceModel);
 
         return super.redirect("/products/all");
     }

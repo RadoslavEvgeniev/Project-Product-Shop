@@ -5,6 +5,7 @@ import org.softuni.productshop.domain.entities.Category;
 import org.softuni.productshop.domain.entities.Product;
 import org.softuni.productshop.domain.models.service.ProductServiceModel;
 import org.softuni.productshop.repository.ProductRepository;
+import org.softuni.productshop.validation.ProductValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +17,30 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final ProductValidationService productValidation;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, ModelMapper modelMapper) {
+    public ProductServiceImpl(
+            ProductRepository productRepository,
+            CategoryService categoryService,
+            ProductValidationService productValidation,
+            ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
+        this.productValidation = productValidation;
         this.modelMapper = modelMapper;
     }
 
     @Override
-    public ProductServiceModel addProduct(ProductServiceModel productServiceModel) {
-        Product product = this.modelMapper.map(productServiceModel, Product.class);
+    public ProductServiceModel createProduct(ProductServiceModel productServiceModel) {
+        if(!productValidation.isValid(productServiceModel)) {
+            throw new IllegalArgumentException();
+        }
 
-        return this.modelMapper.map(this.productRepository.saveAndFlush(product), ProductServiceModel.class);
+        Product product = this.modelMapper.map(productServiceModel, Product.class);
+        product = this.productRepository.save(product);
+        return this.modelMapper.map(product, ProductServiceModel.class);
     }
 
     @Override
@@ -56,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
                 this.categoryService.findAllCategories()
                         .stream()
                         .filter(c -> productServiceModel.getCategories().contains(c.getId()))
-                .collect(Collectors.toList())
+                        .collect(Collectors.toList())
         );
 
         product.setName(productServiceModel.getName());
@@ -64,9 +75,9 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productServiceModel.getPrice());
         product.setCategories(
                 productServiceModel.getCategories()
-                .stream()
-                .map(c -> this.modelMapper.map(c, Category.class))
-                .collect(Collectors.toList())
+                        .stream()
+                        .map(c -> this.modelMapper.map(c, Category.class))
+                        .collect(Collectors.toList())
         );
 
         return this.modelMapper.map(this.productRepository.saveAndFlush(product), ProductServiceModel.class);

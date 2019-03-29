@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    ProductServiceModel addProduct(ProductServiceModel productServiceModel);
+    ProductServiceModel createProduct(ProductServiceModel productServiceModel);
 
     List<ProductServiceModel> findAllProducts();
 
