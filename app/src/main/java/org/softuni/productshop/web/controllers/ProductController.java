@@ -5,16 +5,20 @@ import org.softuni.productshop.domain.models.binding.ProductAddBindingModel;
 import org.softuni.productshop.domain.models.service.ProductServiceModel;
 import org.softuni.productshop.domain.models.view.ProductAllViewModel;
 import org.softuni.productshop.domain.models.view.ProductDetailsViewModel;
+import org.softuni.productshop.error.ProductNameAlreadyExistsException;
+import org.softuni.productshop.error.ProductNotFoundException;
 import org.softuni.productshop.service.CategoryService;
 import org.softuni.productshop.service.CloudinaryService;
 import org.softuni.productshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,4 +141,21 @@ public class ProductController extends BaseController {
                 .collect(Collectors.toList());
     }
 
+    @ExceptionHandler({ProductNotFoundException.class})
+    public ModelAndView handleProductNotFound(ProductNotFoundException e) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("statusCode", e.getStatusCode());
+
+        return modelAndView;
+    }
+
+    @ExceptionHandler({ProductNameAlreadyExistsException.class})
+    public ModelAndView handleProductNameALreadyExist(ProductNameAlreadyExistsException e) {
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("message", e.getMessage());
+        modelAndView.addObject("statusCode", e.getStatusCode());
+
+        return modelAndView;
+    }
 }

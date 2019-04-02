@@ -8,8 +8,10 @@ import org.softuni.productshop.domain.models.view.UserAllViewModel;
 import org.softuni.productshop.domain.models.view.UserProfileViewModel;
 import org.softuni.productshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -124,5 +126,10 @@ public class UserController extends BaseController {
         this.userService.setUserRole(id, "admin");
 
         return super.redirect("/users/all");
+    }
+
+    @InitBinder
+    private void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 }

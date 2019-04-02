@@ -4,6 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.softuni.productshop.domain.entities.Category;
 import org.softuni.productshop.domain.entities.Product;
 import org.softuni.productshop.domain.models.service.ProductServiceModel;
+import org.softuni.productshop.error.ProductNameAlreadyExistsException;
+import org.softuni.productshop.error.ProductNotFoundException;
 import org.softuni.productshop.repository.ProductRepository;
 import org.softuni.productshop.validation.ProductValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +36,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductServiceModel createProduct(ProductServiceModel productServiceModel) {
-        if(!productValidation.isValid(productServiceModel)) {
+        if (!productValidation.isValid(productServiceModel)) {
             throw new IllegalArgumentException();
         }
+        Product product = this.productRepository
+                .findByName(productServiceModel.getName())
+                .orElse(null);
 
-        Product product = this.modelMapper.map(productServiceModel, Product.class);
+        if (product != null) {
+            throw new ProductNameAlreadyExistsException("Product already exists");
+        }
+
+        product = this.modelMapper.map(productServiceModel, Product.class);
         product = this.productRepository.save(product);
+
         return this.modelMapper.map(product, ProductServiceModel.class);
     }
 
@@ -55,13 +65,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceModel findProductById(String id) {
         return this.productRepository.findById(id)
                 .map(p -> this.modelMapper.map(p, ProductServiceModel.class))
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new ProductNotFoundException("Product with the given id was not found!"));
     }
 
     @Override
     public ProductServiceModel editProduct(String id, ProductServiceModel productServiceModel) {
         Product product = this.productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new ProductNotFoundException("Product with the given id was not found!"));
 
         productServiceModel.setCategories(
                 this.categoryService.findAllCategories()
@@ -85,7 +95,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String id) {
-        Product product = this.productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
+        Product product = this.productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product with the given id was not found!"));
 
         this.productRepository.delete(product);
     }
