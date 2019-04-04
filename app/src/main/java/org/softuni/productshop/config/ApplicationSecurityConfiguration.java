@@ -27,7 +27,10 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .passwordParameter("password")
                 .defaultSuccessUrl("/home")
                 .and()
-                .logout();
+                .logout()
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/");
 //                .logoutSuccessUrl("/");
     }
 }

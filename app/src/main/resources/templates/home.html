@@ -47,6 +47,27 @@
             + '</div>'
     }
 
+    $(document).ready(function () {
+        $('#allRadio').attr('checked', true);
+
+        fetch('http://localhost:8000/products/fetch/all')
+            .then((response) => response.json())
+            .then((json) => {
+                $('.products-data').empty();
+
+                if (json.length === 0) {
+                    $('.products-data').append(`<h1 class="text-center font-weight-bold">There are no products in the ${category} category.</h1>`)
+                } else {
+                    for (let i = 0; i < json.length; i += 3) {
+                        $('.products-data').append('<div class="products-row row d-flex justify-content-around mt-5">');
+                        if(i < json.length) $('.products-data .products-row:last-child').append(formatProduct(json[i]));
+                        if(i + 1 < json.length) $('.products-data .products-row:last-child').append(formatProduct(json[i + 1]));
+                        if(i + 2 < json.length) $('.products-data .products-row:last-child').append(formatProduct(json[i + 2]));
+                    }
+                }
+            })
+    });
+
     $('input[type=radio][name=selection]').change(function () {
         let category = $(this).val();
 

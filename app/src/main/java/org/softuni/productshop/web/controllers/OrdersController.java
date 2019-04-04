@@ -18,8 +18,9 @@ import org.softuni.productshop.service.OrderService;
 import org.softuni.productshop.service.ProductService;
 
 @Controller
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrdersController extends BaseController {
+
     private final ProductService productService;
     private final OrderService orderService;
     private final ModelMapper mapper;
@@ -34,15 +35,6 @@ public class OrdersController extends BaseController {
         this.mapper = modelMapper;
     }
 
-    @GetMapping("/product/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ModelAndView orderProduct(@PathVariable String id, ModelAndView modelAndView) {
-        ProductServiceModel serviceModel = productService.findProductById(id);
-        ProductDetailsViewModel viewModel = mapper.map(serviceModel, ProductDetailsViewModel.class);
-        modelAndView.addObject("product", viewModel);
-        return view("order/product", modelAndView);
-    }
-
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ModelAndView getAllOrders(ModelAndView modelAndView) {
@@ -51,19 +43,48 @@ public class OrdersController extends BaseController {
                 .map(o -> mapper.map(o, OrderViewModel.class))
                 .collect(Collectors.toList());
         modelAndView.addObject("orders", viewModels);
-        return view("order/list-orders", modelAndView);
+
+        return view("order/all-orders", modelAndView);
     }
 
-    @GetMapping("/customer")
+    @GetMapping("/all/details/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ModelAndView allOrderDetails(@PathVariable String id, ModelAndView modelAndView) {
+        modelAndView.addObject("order", this.mapper.map(this.orderService.findOrderById(id), OrderViewModel.class));
+
+        return super.view("order/order-details", modelAndView);
+    }
+
+    @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
-    public ModelAndView getCustomerOrders(ModelAndView modelAndView, Principal principal) {
-        String username = principal.getName();
-        List<OrderViewModel> viewModels = orderService.findOrdersByCustomer(username)
+    public ModelAndView getMyOrders(ModelAndView modelAndView, Principal principal) {
+        List<OrderViewModel> viewModels = orderService.findOrdersByCustomer(principal.getName())
                 .stream()
                 .map(o -> mapper.map(o, OrderViewModel.class))
                 .collect(Collectors.toList());
         modelAndView.addObject("orders", viewModels);
 
-        return view("order/list-orders", modelAndView);
+        return view("order/all-orders", modelAndView);
     }
+
+    @GetMapping("/my/details/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ModelAndView myOrderDetails(@PathVariable String id, ModelAndView modelAndView) {
+        modelAndView.addObject("order", this.mapper.map(this.orderService.findOrderById(id), OrderViewModel.class));
+
+        return super.view("order/order-details", modelAndView);
+    }
+
+//    @GetMapping("/customer")
+//    @PreAuthorize("isAuthenticated()")
+//    public ModelAndView getCustomerOrders(ModelAndView modelAndView, Principal principal) {
+//        String username = principal.getName();
+//        List<OrderViewModel> viewModels = orderService.findOrdersByCustomer(username)
+//                .stream()
+//                .map(o -> mapper.map(o, OrderViewModel.class))
+//                .collect(Collectors.toList());
+//        modelAndView.addObject("orders", viewModels);
+//
+//        return view("order/list-orders", modelAndView);
+//    }
 }

@@ -2,66 +2,53 @@ package org.softuni.productshop.domain.models.service;
 
 import org.modelmapper.ModelMapper;
 import org.softuni.productshop.domain.entities.Order;
+import org.softuni.productshop.domain.entities.Product;
+import org.softuni.productshop.domain.entities.User;
 import org.softuni.productshop.mappings.IHaveCustomMappings;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
-public class OrderServiceModel implements IHaveCustomMappings {
-    private String imageUrl;
-    private String name;
-    private BigDecimal price;
-    private String customer;
+public class OrderServiceModel extends BaseServiceModel {
 
-    public String getImageUrl() {
-        return imageUrl;
+    private List<ProductServiceModel> products;
+    private UserServiceModel customer;
+    private BigDecimal totalPrice;
+    private LocalDateTime finishedOn;
+
+    public OrderServiceModel() {
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public List<ProductServiceModel> getProducts() {
+        return products;
     }
 
-    public String getName() {
-        return name;
+    public void setProducts(List<ProductServiceModel> products) {
+        this.products = products;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getCustomer() {
+    public UserServiceModel getCustomer() {
         return customer;
     }
 
-    public void setCustomer(String customer) {
+    public void setCustomer(UserServiceModel customer) {
         this.customer = customer;
     }
 
-    @Override
-    public void configureMappings(ModelMapper mapper) {
-        mapper.createTypeMap(Order.class, OrderServiceModel.class)
-                .addMapping(
-                        entity -> entity.getProduct().getName(),
-                        (dto, value) -> dto.setName((String) value)
-                )
-                .addMapping(
-                        entity -> entity.getProduct().getPrice(),
-                        (dto, value) -> dto.setPrice((BigDecimal) value)
-                )
-                .addMapping(
-                        entity -> entity.getProduct().getImageUrl(),
-                        (dto, value) -> dto.setImageUrl((String) value)
-                )
-                .addMapping(
-                        entity -> entity.getUser().getUsername(),
-                        (dto, value) -> dto.setCustomer((String) value)
-                );
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public LocalDateTime getFinishedOn() {
+        return finishedOn;
+    }
+
+    public void setFinishedOn(LocalDateTime finishedOn) {
+        this.finishedOn = finishedOn;
     }
 }
