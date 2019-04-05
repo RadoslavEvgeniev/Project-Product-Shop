@@ -3,6 +3,7 @@ package org.softuni.productshop.web.controllers;
 import org.modelmapper.ModelMapper;
 import org.softuni.productshop.domain.models.view.CategoryViewModel;
 import org.softuni.productshop.service.CategoryService;
+import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,12 +26,14 @@ public class HomeController extends BaseController {
 
     @GetMapping("/")
     @PreAuthorize("isAnonymous()")
+    @PageTitle("Index")
     public ModelAndView index() {
         return super.view("index");
     }
 
     @GetMapping("/home")
     @PreAuthorize("isAuthenticated()")
+    @PageTitle("Home")
     public ModelAndView home(ModelAndView modelAndView) {
         modelAndView.addObject("categories", this.categoryService.findAllCategories().stream().map(category -> this.modelMapper.map(category, CategoryViewModel.class)).collect(Collectors.toList()));
 

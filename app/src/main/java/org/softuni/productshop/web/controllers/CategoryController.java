@@ -5,6 +5,7 @@ import org.softuni.productshop.domain.models.binding.CategoryAddBindingModel;
 import org.softuni.productshop.domain.models.service.CategoryServiceModel;
 import org.softuni.productshop.domain.models.view.CategoryViewModel;
 import org.softuni.productshop.service.CategoryService;
+import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ public class CategoryController extends BaseController {
 
     @GetMapping("/add")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("Add Category")
     public ModelAndView addCategory() {
         return super.view("category/add-category");
     }
@@ -43,6 +45,7 @@ public class CategoryController extends BaseController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("All Categories")
     public ModelAndView allCategories(ModelAndView modelAndView) {
         modelAndView.addObject("categories",
                 this.categoryService.findAllCategories()
@@ -56,6 +59,7 @@ public class CategoryController extends BaseController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("Edit Category")
     public ModelAndView editCategory(@PathVariable String id, ModelAndView modelAndView) {
         modelAndView.addObject("model",
                 this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryViewModel.class)
@@ -74,6 +78,7 @@ public class CategoryController extends BaseController {
 
     @GetMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("Delete Category")
     public ModelAndView deleteCategory(@PathVariable String id, ModelAndView modelAndView) {
         modelAndView.addObject("model",
                 this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryViewModel.class)

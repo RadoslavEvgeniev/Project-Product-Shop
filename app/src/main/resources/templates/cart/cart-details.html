@@ -23,15 +23,15 @@
             <tbody>
             <th:block th:each="item : ${#session.getAttribute('shopping-cart')}" th:object="${item}">
                 <tr class="row mx-auto">
-                    <th class="col-md-2 text-center"><img th:src="*{product.imageUrl}" alt="Product" height="150" width="150"></th>
-                    <td class="col-md-3 text-center" th:text="*{product.name}"></td>
-                    <td class="col-md-2 text-center" th:text="*{product.description}"></td>
-                    <td class="col-md-2 text-center" th:text="*{product.price}"></td>
+                    <th class="col-md-2 text-center"><img th:src="*{product.product.imageUrl}" alt="Product" height="150" width="150"></th>
+                    <td class="col-md-3 text-center" th:text="*{product.product.name}"></td>
+                    <td class="col-md-2 text-center" th:text="*{product.product.description}"></td>
+                    <td class="col-md-2 text-center" th:text="*{product.product.price}"></td>
                     <td class="col-md-1 text-center" th:text="*{quantity}"></td>
                     <td class="col-md-2 text-center">
                         <form th:action="@{/cart/remove-product}" th:method="delete">
                             <div class="button-holder d-flex justify-content-center">
-                                <input type="hidden" name="id" th:value="*{product.id}">
+                                <input type="hidden" name="id" th:value="*{product.product.id}">
                                 <button type="submit" class="btn btn-danger">Remove</button>
                             </div>
                         </form>

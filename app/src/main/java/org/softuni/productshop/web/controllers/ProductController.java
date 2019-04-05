@@ -3,6 +3,7 @@ package org.softuni.productshop.web.controllers;
 import org.modelmapper.ModelMapper;
 import org.softuni.productshop.domain.models.binding.ProductAddBindingModel;
 import org.softuni.productshop.domain.models.service.ProductServiceModel;
+import org.softuni.productshop.domain.models.view.OrderProductViewModel;
 import org.softuni.productshop.domain.models.view.ProductAllViewModel;
 import org.softuni.productshop.domain.models.view.ProductDetailsViewModel;
 import org.softuni.productshop.error.ProductNameAlreadyExistsException;
@@ -10,6 +11,7 @@ import org.softuni.productshop.error.ProductNotFoundException;
 import org.softuni.productshop.service.CategoryService;
 import org.softuni.productshop.service.CloudinaryService;
 import org.softuni.productshop.service.ProductService;
+import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +43,7 @@ public class ProductController extends BaseController {
 
     @GetMapping("/add")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("Add Product")
     public ModelAndView addProduct() {
         return super.view("product/add-product");
     }
@@ -66,6 +69,7 @@ public class ProductController extends BaseController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("All Products")
     public ModelAndView allProducts(ModelAndView modelAndView) {
         modelAndView.addObject("products", this.productService.findAllProducts()
                 .stream()
@@ -77,6 +81,7 @@ public class ProductController extends BaseController {
 
     @GetMapping("/details/{id}")
     @PreAuthorize("isAuthenticated()")
+    @PageTitle("Product Details")
     public ModelAndView detailsProduct(@PathVariable String id, ModelAndView modelAndView) {
         modelAndView.addObject("product", this.modelMapper.map(this.productService.findProductById(id), ProductDetailsViewModel.class));
 
@@ -85,6 +90,7 @@ public class ProductController extends BaseController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("Edit Product")
     public ModelAndView editProduct(@PathVariable String id, ModelAndView modelAndView) {
         ProductServiceModel productServiceModel = this.productService.findProductById(id);
         ProductAddBindingModel model = this.modelMapper.map(productServiceModel, ProductAddBindingModel.class);
@@ -106,6 +112,7 @@ public class ProductController extends BaseController {
 
     @GetMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
+    @PageTitle("Delete Product")
     public ModelAndView deleteProduct(@PathVariable String id, ModelAndView modelAndView) {
         ProductServiceModel productServiceModel = this.productService.findProductById(id);
         ProductAddBindingModel model = this.modelMapper.map(productServiceModel, ProductAddBindingModel.class);

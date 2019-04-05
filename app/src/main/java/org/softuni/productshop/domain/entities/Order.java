@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends BaseEntity {
 
-    private List<Product> products;
+    private List<OrderProduct> products;
     private User customer;
     private BigDecimal totalPrice;
     private LocalDateTime finishedOn;
@@ -19,7 +19,7 @@ public class Order extends BaseEntity {
     public Order() {
     }
 
-    @ManyToMany(targetEntity = Product.class)
+    @ManyToMany(targetEntity = OrderProduct.class, cascade = CascadeType.ALL)
     @JoinTable(
             name = "orders_products",
             joinColumns = @JoinColumn(
@@ -31,11 +31,11 @@ public class Order extends BaseEntity {
                     referencedColumnName = "id"
             )
     )
-    public List<Product> getProducts() {
+    public List<OrderProduct> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(List<OrderProduct> products) {
         this.products = products;
     }
 

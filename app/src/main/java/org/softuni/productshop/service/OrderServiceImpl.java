@@ -10,6 +10,7 @@ import org.softuni.productshop.validation.ProductValidationService;
 import org.softuni.productshop.validation.UserValidationService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void createOrder(OrderServiceModel orderServiceModel) {
         orderServiceModel.setFinishedOn(LocalDateTime.now());
 
@@ -50,10 +52,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderServiceModel> findAllOrders() {
-        return orderRepository.findAll()
+        List<Order> orders = this.orderRepository.findAll();
+        List<OrderServiceModel> orderServiceModels = orders
                 .stream()
-                .map(o -> modelMapper.map(o, OrderServiceModel.class))
+                .map(o -> this.modelMapper.map(o, OrderServiceModel.class))
                 .collect(Collectors.toList());
+
+        return orderServiceModels;
     }
 
     @Override

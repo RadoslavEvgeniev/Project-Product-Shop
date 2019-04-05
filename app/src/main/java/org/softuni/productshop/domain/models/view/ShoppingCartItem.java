@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class ShoppingCartItem implements Serializable {
 
-    private ProductDetailsViewModel product;
+    private OrderProductViewModel product;
     private int quantity;
 
     public ShoppingCartItem() {
     }
 
-    public ProductDetailsViewModel getProduct() {
+    public OrderProductViewModel getProduct() {
         return product;
     }
 
-    public void setProduct(ProductDetailsViewModel product) {
+    public void setProduct(OrderProductViewModel product) {
         this.product = product;
     }
 
