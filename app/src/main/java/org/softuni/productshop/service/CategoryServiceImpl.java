@@ -7,6 +7,7 @@ import org.softuni.productshop.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Validator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,15 +16,21 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
+    private final Validator validator;
 
     @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper, Validator validator) {
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.validator = validator;
     }
 
     @Override
     public CategoryServiceModel addCategory(CategoryServiceModel categoryServiceModel) {
+        if (!validator.validate(categoryServiceModel).isEmpty()) {
+            throw new IllegalArgumentException("Invalid Category");
+        }
+
         Category category = this.modelMapper.map(categoryServiceModel, Category.class);
 
         return this.modelMapper.map(this.categoryRepository.saveAndFlush(category), CategoryServiceModel.class);

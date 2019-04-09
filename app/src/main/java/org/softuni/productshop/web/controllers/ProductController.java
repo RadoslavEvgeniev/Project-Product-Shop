@@ -83,7 +83,9 @@ public class ProductController extends BaseController {
     @PreAuthorize("isAuthenticated()")
     @PageTitle("Product Details")
     public ModelAndView detailsProduct(@PathVariable String id, ModelAndView modelAndView) {
-        modelAndView.addObject("product", this.modelMapper.map(this.productService.findProductById(id), ProductDetailsViewModel.class));
+        ProductDetailsViewModel model = this.modelMapper.map(this.productService.findProductById(id), ProductDetailsViewModel.class);
+
+        modelAndView.addObject("product", model);
 
         return super.view("product/details", modelAndView);
     }

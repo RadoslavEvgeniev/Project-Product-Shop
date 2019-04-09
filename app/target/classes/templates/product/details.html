@@ -25,14 +25,19 @@
         </div>
         <div class="row">
             <div class="col col-md-12">
-                <h4 th:text="'Price: ' + ${product.price}"></h4>
+                <th:block th:if="${product.discountedPrice == null}">
+                    <h4 th:text="'Price: ' + ${product.price}"></h4>
+                </th:block>
+                <th:block th:if="${product.discountedPrice != null}">
+                    <h4 th:text="'Price: ' + ${product.discountedPrice}"></h4>
+                </th:block>
             </div>
         </div>
         <div class="row">
             <form class="form w-25 mx-auto" th:action="@{/cart/add-product}" th:method="post">
                 <div class="form-group mx-auto">
                     <label for="quantity" class="font-weight-bold">Quantity</label>
-                    <input id="quantity" class="form-control" type="number" min="1" max="15" step="1" name="quantity" />
+                    <input id="quantity" class="form-control text-center" type="number" min="1" max="15" step="1" name="quantity" value="1" />
                 </div>
                 <input type="hidden" name="id" th:value="${product.id}">
                 <button type="submit" class="btn btn-success">Order Product</button>

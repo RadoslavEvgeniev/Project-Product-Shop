@@ -81,9 +81,11 @@ public class UserController extends BaseController {
 
     @PatchMapping("/edit")
     @PreAuthorize("isAuthenticated()")
-    public ModelAndView editProfileConfirm(@ModelAttribute UserEditBindingModel model) {
-        if (!model.getPassword().equals(model.getConfirmPassword())) {
-            return super.view("edit-profile");
+    public ModelAndView editProfileConfirm(@ModelAttribute UserEditBindingModel model, ModelAndView modelAndView) {
+        if (model.getPassword() != null && !model.getPassword().equals(model.getConfirmPassword())) {
+            modelAndView.addObject("model", this.modelMapper.map(model, UserProfileViewModel.class));
+
+            return super.view("edit-profile", modelAndView);
         }
 
         this.userService.editUserProfile(this.modelMapper.map(model, UserServiceModel.class), model.getOldPassword());

@@ -11,7 +11,7 @@
     <groupId>org.softuni</groupId>
     <artifactId>productshop</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>productshop</name>
     <description>Product Shop is a system that registers users, categories, products and orders. It is a significantly
         big project, and as such it will have several parts. In this exercise you will land the basics of the

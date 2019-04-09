@@ -41,6 +41,11 @@ public class OfferServiceImpl implements OfferService {
     private void generateOffers() {
         this.offerRepository.deleteAll();
         List<ProductServiceModel> products = this.productService.findAllProducts();
+
+        if (products.isEmpty()) {
+            return;
+        }
+
         Random rnd = new Random();
         List<Offer> offers = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
