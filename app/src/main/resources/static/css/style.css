@@ -30,3 +30,8 @@ img.img-thumbnail {
     margin: 5px;
 }
 
+.error {
+    color: red;
+    font-family: "Harlow Solid Italic";
+}
+

@@ -2,21 +2,17 @@ package org.softuni.productshop.service;
 
 import org.modelmapper.ModelMapper;
 import org.softuni.productshop.domain.entities.Category;
-import org.softuni.productshop.domain.entities.Offer;
 import org.softuni.productshop.domain.entities.Product;
 import org.softuni.productshop.domain.models.service.ProductServiceModel;
 import org.softuni.productshop.error.ProductNameAlreadyExistsException;
 import org.softuni.productshop.error.ProductNotFoundException;
 import org.softuni.productshop.repository.OfferRepository;
 import org.softuni.productshop.repository.ProductRepository;
-import org.softuni.productshop.validation.ProductValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,27 +21,21 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final OfferRepository offerRepository;
     private final CategoryService categoryService;
-    private final ProductValidationService productValidation;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ProductServiceImpl(
             ProductRepository productRepository,
             OfferRepository offerRepository, CategoryService categoryService,
-            ProductValidationService productValidation,
             ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.offerRepository = offerRepository;
         this.categoryService = categoryService;
-        this.productValidation = productValidation;
         this.modelMapper = modelMapper;
     }
 
     @Override
     public ProductServiceModel createProduct(ProductServiceModel productServiceModel) {
-        if (!productValidation.isValid(productServiceModel)) {
-            throw new IllegalArgumentException();
-        }
         Product product = this.productRepository
                 .findByName(productServiceModel.getName())
                 .orElse(null);

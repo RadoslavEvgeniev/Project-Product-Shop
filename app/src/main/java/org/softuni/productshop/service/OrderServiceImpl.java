@@ -6,13 +6,11 @@ import org.softuni.productshop.domain.models.service.OrderServiceModel;
 import org.softuni.productshop.error.OrderNotFoundException;
 import org.softuni.productshop.repository.OrderRepository;
 import org.softuni.productshop.repository.ProductRepository;
-import org.softuni.productshop.validation.ProductValidationService;
-import org.softuni.productshop.validation.UserValidationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,22 +21,17 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
-    private final UserValidationService userValidation;
-    private final ProductValidationService productValidation;
 
+    @Autowired
     public OrderServiceImpl(
             OrderRepository orderRepository,
             ProductRepository productRepository,
             UserService userService,
-            UserValidationService userValidation,
-            ProductValidationService productValidation,
             ModelMapper modelMapper
     ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userService = userService;
-        this.userValidation = userValidation;
-        this.productValidation = productValidation;
         this.modelMapper = modelMapper;
     }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -35,7 +36,12 @@ public class HomeController extends BaseController {
     @PreAuthorize("isAuthenticated()")
     @PageTitle("Home")
     public ModelAndView home(ModelAndView modelAndView) {
-        modelAndView.addObject("categories", this.categoryService.findAllCategories().stream().map(category -> this.modelMapper.map(category, CategoryViewModel.class)).collect(Collectors.toList()));
+        List<CategoryViewModel> categories = this.categoryService.findAllCategories()
+                .stream()
+                .map(category -> this.modelMapper.map(category, CategoryViewModel.class))
+                .collect(Collectors.toList());
+
+        modelAndView.addObject("categories", categories);
 
         return super.view("home", modelAndView);
     }

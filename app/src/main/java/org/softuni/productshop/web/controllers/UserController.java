@@ -7,11 +7,13 @@ import org.softuni.productshop.domain.models.service.UserServiceModel;
 import org.softuni.productshop.domain.models.view.UserAllViewModel;
 import org.softuni.productshop.domain.models.view.UserProfileViewModel;
 import org.softuni.productshop.service.UserService;
+import org.softuni.productshop.validation.UserRegisterValidator;
 import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,28 +28,37 @@ public class UserController extends BaseController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final UserRegisterValidator userRegisterValidator;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserRegisterValidator userRegisterValidator) {
         this.userService = userService;
         this.modelMapper = modelMapper;
+        this.userRegisterValidator = userRegisterValidator;
     }
 
     @GetMapping("/register")
     @PreAuthorize("isAnonymous()")
     @PageTitle("Register")
-    public ModelAndView register() {
-        return super.view("register");
+    public ModelAndView register(ModelAndView modelAndView, @ModelAttribute(name = "model") UserRegisterBindingModel model) {
+        modelAndView.addObject("model", model);
+
+        return super.view("user/register", modelAndView);
     }
 
     @PostMapping("/register")
     @PreAuthorize("isAnonymous()")
-    public ModelAndView registerConfirm(@ModelAttribute UserRegisterBindingModel model) {
-        if (!model.getPassword().equals(model.getConfirmPassword())) {
-            return super.view("register");
+    public ModelAndView registerConfirm(ModelAndView modelAndView, @ModelAttribute(name = "model") UserRegisterBindingModel model, BindingResult bindingResult) {
+        this.userRegisterValidator.validate(model, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            modelAndView.addObject("model", model);
+
+            return super.view("user/register", modelAndView);
         }
 
-        this.userService.registerUser(this.modelMapper.map(model, UserServiceModel.class));
+        UserServiceModel userServiceModel = this.modelMapper.map(model, UserServiceModel.class);
+        this.userService.registerUser(userServiceModel);
 
         return super.redirect("/login");
     }
