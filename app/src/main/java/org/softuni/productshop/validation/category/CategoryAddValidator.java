@@ -1,7 +1,8 @@
-package org.softuni.productshop.validation;
+package org.softuni.productshop.validation.category;
 
 import org.softuni.productshop.domain.models.binding.CategoryAddBindingModel;
 import org.softuni.productshop.repository.CategoryRepository;
+import org.softuni.productshop.validation.ValidationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -26,19 +27,20 @@ public class CategoryAddValidator implements Validator {
     public void validate(Object o, Errors errors) {
         CategoryAddBindingModel categoryAddBindingModel = (CategoryAddBindingModel) o;
 
-        if (categoryAddBindingModel.getName() == null) {
-            errors.rejectValue("name", "Name cannot be Null!", "Name cannot be Null!");
-        }
-
-        if (categoryAddBindingModel.getName().equals("")) {
-            errors.rejectValue("name", "Name cannot be Empty!", "Name cannot be Empty!");
-        }
-
         if (categoryAddBindingModel.getName().length() < 3) {
-            errors.rejectValue("name", "Name must contain at least 3 characters!", "Name must contain at least 3 characters!");
+            errors.rejectValue(
+                    "name",
+                    ValidationConstants.NAME_LENGTH,
+                    ValidationConstants.NAME_LENGTH
+            );
         }
 
-        this.categoryRepository.findByName(categoryAddBindingModel.getName())
-                .ifPresent((c) -> errors.rejectValue("name", "Category already exists!", "Category already exists!"));
+        if (this.categoryRepository.findByName(categoryAddBindingModel.getName()).isPresent()) {
+            errors.rejectValue(
+                    "name",
+                    String.format(ValidationConstants.NAME_ALREADY_EXISTS, "Category", categoryAddBindingModel.getName()),
+                    String.format(ValidationConstants.NAME_ALREADY_EXISTS, "Category", categoryAddBindingModel.getName())
+            );
+        }
     }
 }

@@ -2,11 +2,12 @@ package org.softuni.productshop.web.controllers;
 
 import org.modelmapper.ModelMapper;
 import org.softuni.productshop.domain.models.binding.CategoryAddBindingModel;
+import org.softuni.productshop.domain.models.binding.CategoryEditBindingModel;
 import org.softuni.productshop.domain.models.service.CategoryServiceModel;
 import org.softuni.productshop.domain.models.view.CategoryViewModel;
 import org.softuni.productshop.service.CategoryService;
-import org.softuni.productshop.validation.CategoryAddValidator;
-import org.softuni.productshop.validation.CategoryEditValidator;
+import org.softuni.productshop.validation.category.CategoryAddValidator;
+import org.softuni.productshop.validation.category.CategoryEditValidator;
 import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,7 +56,8 @@ public class CategoryController extends BaseController {
             return super.view("category/add-category", modelAndView);
         }
 
-        this.categoryService.addCategory(this.modelMapper.map(model, CategoryServiceModel.class));
+        CategoryServiceModel categoryServiceModel = this.modelMapper.map(model, CategoryServiceModel.class);
+        this.categoryService.addCategory(categoryServiceModel);
 
         return super.redirect("/categories/all");
     }
@@ -64,12 +66,12 @@ public class CategoryController extends BaseController {
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     @PageTitle("All Categories")
     public ModelAndView allCategories(ModelAndView modelAndView) {
-        modelAndView.addObject("categories",
-                this.categoryService.findAllCategories()
-                        .stream()
-                        .map(c -> this.modelMapper.map(c, CategoryViewModel.class))
-                        .collect(Collectors.toList())
-        );
+        List<CategoryViewModel> categories = this.categoryService.findAllCategories()
+                .stream()
+                .map(c -> this.modelMapper.map(c, CategoryViewModel.class))
+                .collect(Collectors.toList());
+
+        modelAndView.addObject("categories", categories);
 
         return super.view("category/all-categories", modelAndView);
     }
@@ -77,10 +79,8 @@ public class CategoryController extends BaseController {
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     @PageTitle("Edit Category")
-    public ModelAndView editCategory(@PathVariable String id,
-                                     ModelAndView modelAndView,
-                                     @ModelAttribute(name = "model") CategoryAddBindingModel model) {
-        model = this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryAddBindingModel.class);
+    public ModelAndView editCategory(@PathVariable String id, ModelAndView modelAndView, @ModelAttribute(name = "model") CategoryEditBindingModel model) {
+        model = this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryEditBindingModel.class);
 
         modelAndView.addObject("categoryId", id);
         modelAndView.addObject("model", model);
@@ -90,8 +90,7 @@ public class CategoryController extends BaseController {
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
-    public ModelAndView editCategoryConfirm(@PathVariable String id, ModelAndView modelAndView,
-                                            @ModelAttribute(name = "model") CategoryAddBindingModel model, BindingResult bindingResult) {
+    public ModelAndView editCategoryConfirm(@PathVariable String id, ModelAndView modelAndView, @ModelAttribute(name = "model") CategoryEditBindingModel model, BindingResult bindingResult) {
         this.editValidator.validate(model, bindingResult);
 
         if (bindingResult.hasErrors()) {

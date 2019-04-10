@@ -1,7 +1,8 @@
-package org.softuni.productshop.validation;
+package org.softuni.productshop.validation.user;
 
 import org.softuni.productshop.domain.models.binding.UserRegisterBindingModel;
 import org.softuni.productshop.repository.UserRepository;
+import org.softuni.productshop.validation.ValidationConstants;
 import org.softuni.productshop.validation.annotation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;

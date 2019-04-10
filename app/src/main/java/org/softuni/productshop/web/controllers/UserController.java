@@ -7,8 +7,8 @@ import org.softuni.productshop.domain.models.service.UserServiceModel;
 import org.softuni.productshop.domain.models.view.UserAllViewModel;
 import org.softuni.productshop.domain.models.view.UserProfileViewModel;
 import org.softuni.productshop.service.UserService;
-import org.softuni.productshop.validation.UserEditValidator;
-import org.softuni.productshop.validation.UserRegisterValidator;
+import org.softuni.productshop.validation.user.UserEditValidator;
+import org.softuni.productshop.validation.user.UserRegisterValidator;
 import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -126,7 +127,8 @@ public class UserController extends BaseController {
                 .stream()
                 .map(u -> {
                     UserAllViewModel user = this.modelMapper.map(u, UserAllViewModel.class);
-                    user.setAuthorities(u.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toSet()));
+                    Set<String> authorities = u.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toSet());
+                    user.setAuthorities(authorities);
 
                     return user;
                 })
@@ -134,7 +136,7 @@ public class UserController extends BaseController {
 
         modelAndView.addObject("users", users);
 
-        return super.view("all-users", modelAndView);
+        return super.view("user/all-users", modelAndView);
     }
 
     @PostMapping("/set-user/{id}")
