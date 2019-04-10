@@ -16,7 +16,7 @@
             <label for="edit-category-name" class="font-weight-bold">Name</label>
             <input type="text" class="form-control text-center" id="edit-category-name" name="name" th:value="*{name}">
             <th:block th:if="${#fields.hasErrors('name')}">
-                <small style="color: red" th:errors="*{name}"></small>
+                <small th:errors="*{name}" class="error"></small>
             </th:block>
         </div>
         <hr class="hr-2 bg-dark">

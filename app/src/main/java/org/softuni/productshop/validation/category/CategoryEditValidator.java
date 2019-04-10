@@ -1,13 +1,22 @@
 package org.softuni.productshop.validation.category;
 
-import org.softuni.productshop.domain.models.binding.CategoryAddBindingModel;
+import org.softuni.productshop.domain.entities.Category;
 import org.softuni.productshop.domain.models.binding.CategoryEditBindingModel;
-import org.springframework.stereotype.Component;
+import org.softuni.productshop.repository.CategoryRepository;
+import org.softuni.productshop.validation.ValidationConstants;
+import org.softuni.productshop.validation.annotation.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
-@Component
-public class CategoryEditValidator implements Validator {
+@Validator
+public class CategoryEditValidator implements org.springframework.validation.Validator {
+
+    private final CategoryRepository categoryRepository;
+
+    @Autowired
+    public CategoryEditValidator(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public boolean supports(Class<?> aClass) {
@@ -18,16 +27,22 @@ public class CategoryEditValidator implements Validator {
     public void validate(Object o, Errors errors) {
         CategoryEditBindingModel categoryEditBindingModel = (CategoryEditBindingModel) o;
 
-        if (categoryEditBindingModel.getName() == null) {
-            errors.rejectValue("name", "Name cannot be Null!", "Name cannot be Null!");
-        }
-
-        if (categoryEditBindingModel.getName().equals("")) {
-            errors.rejectValue("name", "Name cannot be Empty!", "Name cannot be Empty!");
-        }
+        //Category category = this.categoryRepository.findByName(categoryEditBindingModel.getName()).orElse(null);
 
         if (categoryEditBindingModel.getName().length() < 3) {
-            errors.rejectValue("name", "Name must contain at least 3 characters!", "Name must contain at least 3 characters!");
+            errors.rejectValue(
+                    "name",
+                    ValidationConstants.NAME_LENGTH,
+                    ValidationConstants.NAME_LENGTH
+            );
+        }
+
+        if (this.categoryRepository.findByName(categoryEditBindingModel.getName()).isPresent()) {
+            errors.rejectValue(
+                    "name",
+                    String.format(ValidationConstants.NAME_ALREADY_EXISTS, "Category", categoryEditBindingModel.getName()),
+                    String.format(ValidationConstants.NAME_ALREADY_EXISTS, "Category", categoryEditBindingModel.getName())
+            );
         }
     }
 }

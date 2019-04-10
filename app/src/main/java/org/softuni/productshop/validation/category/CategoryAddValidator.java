@@ -3,13 +3,12 @@ package org.softuni.productshop.validation.category;
 import org.softuni.productshop.domain.models.binding.CategoryAddBindingModel;
 import org.softuni.productshop.repository.CategoryRepository;
 import org.softuni.productshop.validation.ValidationConstants;
+import org.softuni.productshop.validation.annotation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
-@Component
-public class CategoryAddValidator implements Validator {
+@Validator
+public class CategoryAddValidator implements org.springframework.validation.Validator {
 
     private final CategoryRepository categoryRepository;
 
