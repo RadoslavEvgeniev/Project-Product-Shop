@@ -7,6 +7,7 @@ import org.softuni.productshop.domain.models.service.UserServiceModel;
 import org.softuni.productshop.domain.models.view.UserAllViewModel;
 import org.softuni.productshop.domain.models.view.UserProfileViewModel;
 import org.softuni.productshop.service.UserService;
+import org.softuni.productshop.validation.UserEditValidator;
 import org.softuni.productshop.validation.UserRegisterValidator;
 import org.softuni.productshop.web.annotations.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,14 @@ public class UserController extends BaseController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final UserRegisterValidator userRegisterValidator;
+    private final UserEditValidator userEditValidator;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper, UserRegisterValidator userRegisterValidator) {
+    public UserController(UserService userService, ModelMapper modelMapper, UserRegisterValidator userRegisterValidator, UserEditValidator userEditValidator) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.userRegisterValidator = userRegisterValidator;
+        this.userEditValidator = userEditValidator;
     }
 
     @GetMapping("/register")
@@ -52,6 +55,8 @@ public class UserController extends BaseController {
         this.userRegisterValidator.validate(model, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            model.setPassword(null);
+            model.setConfirmPassword(null);
             modelAndView.addObject("model", model);
 
             return super.view("user/register", modelAndView);
@@ -67,39 +72,48 @@ public class UserController extends BaseController {
     @PreAuthorize("isAnonymous()")
     @PageTitle("Login")
     public ModelAndView login() {
-        return super.view("login");
+        return super.view("user/login");
     }
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     @PageTitle("Profile")
     public ModelAndView profile(Principal principal, ModelAndView modelAndView) {
-        modelAndView
-                .addObject("model", this.modelMapper.map(this.userService.findUserByUserName(principal.getName()), UserProfileViewModel.class));
+        UserServiceModel userServiceModel = this.userService.findUserByUserName(principal.getName());
+        UserProfileViewModel model = this.modelMapper.map(userServiceModel, UserProfileViewModel.class);
+        modelAndView.addObject("model", model);
 
-        return super.view("profile", modelAndView);
+        return super.view("user/profile", modelAndView);
     }
 
     @GetMapping("/edit")
     @PreAuthorize("isAuthenticated()")
     @PageTitle("Edit Profile")
-    public ModelAndView editProfile(Principal principal, ModelAndView modelAndView) {
-        modelAndView
-                .addObject("model", this.modelMapper.map(this.userService.findUserByUserName(principal.getName()), UserProfileViewModel.class));
+    public ModelAndView editProfile(Principal principal, ModelAndView modelAndView, @ModelAttribute(name = "model") UserEditBindingModel model) {
+        UserServiceModel userServiceModel = this.userService.findUserByUserName(principal.getName());
+        model = this.modelMapper.map(userServiceModel, UserEditBindingModel.class);
+        model.setPassword(null);
+        modelAndView.addObject("model", model);
 
-        return super.view("edit-profile", modelAndView);
+        return super.view("user/edit-profile", modelAndView);
     }
 
     @PatchMapping("/edit")
     @PreAuthorize("isAuthenticated()")
-    public ModelAndView editProfileConfirm(@ModelAttribute UserEditBindingModel model, ModelAndView modelAndView) {
-        if (model.getPassword() != null && !model.getPassword().equals(model.getConfirmPassword())) {
-            modelAndView.addObject("model", this.modelMapper.map(model, UserProfileViewModel.class));
+    public ModelAndView editProfileConfirm(ModelAndView modelAndView, @ModelAttribute(name = "model") UserEditBindingModel model, BindingResult bindingResult) {
+        this.userEditValidator.validate(model, bindingResult);
 
-            return super.view("edit-profile", modelAndView);
+        if (bindingResult.hasErrors()) {
+            model.setOldPassword(null);
+            model.setPassword(null);
+            model.setConfirmPassword(null);
+            modelAndView.addObject("model", model);
+
+            return super.view("user/edit-profile", modelAndView);
         }
 
-        this.userService.editUserProfile(this.modelMapper.map(model, UserServiceModel.class), model.getOldPassword());
+        UserServiceModel userServiceModel = this.modelMapper.map(model, UserServiceModel.class);
+        this.userService.editUserProfile(userServiceModel, model.getOldPassword());
 
         return super.redirect("/users/profile");
     }

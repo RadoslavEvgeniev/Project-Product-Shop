@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+</head>
+<body>
+<header>
+    <th:block th:include="~{fragments/navbar}"></th:block>
+</header>
+<main class="mt-3">
+    <h1 class="text-center text-dark">Edit Profile</h1>
+    <hr class="hr-2 bg-dark w-25">
+    <form class="form w-25 mx-auto" th:action="@{/users/edit}" th:method="patch" th:object="${model}">
+        <div class="form-group">
+            <label for="username" class="font-weight-bold">Username</label>
+            <input type="text" th:value="*{username}" class="form-control" name="username" id="username" readonly>
+        </div>
+        <div class="form-group">
+            <label for="oldPassword" class="font-weight-bold">Old Password</label>
+            <input th:value="*{oldPassword}" type="password" class="form-control" id="oldPassword" placeholder="Password..." name="oldPassword" required>
+            <th:block th:if="${#fields.hasErrors('oldPassword')}">
+                <small th:errors="*{oldPassword}" class="error"></small>
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="password" class="font-weight-bold">New Password</label>
+            <input th:value="*{password}" type="password" class="form-control" id="password" placeholder="New Password..." name="password">
+            <th:block th:if="${#fields.hasErrors('password')}">
+                <small th:errors="*{password}" class="error"></small>
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword" class="font-weight-bold">Confirm New Password</label>
+            <input th:value="*{confirmPassword}" type="password" class="form-control" id="confirmPassword" placeholder="Confirm New Password..." name="confirmPassword">
+            <th:block th:if="${#fields.hasErrors('password')}">
+                <small th:errors="*{password}" class="error"></small>
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="email" class="font-weight-bold">Email</label>
+            <input th:value="*{email}" type="email" class="form-control" id="email" placeholder="Email..." name="email">
+            <th:block th:if="${#fields.hasErrors('email')}">
+                <small th:errors="*{email}" class="error"></small>
+            </th:block>
+        </div>
+        <hr class="hr-2 bg-dark">
+        <div class="button-holder d-flex justify-content-center">
+            <button type="submit" class="btn btn-dark">Edit</button>
+        </div>
+    </form>
+</main>
+<footer>
+    <th:block th:include="~{fragments/footer}"></th:block>
+</footer>
+</body>
+</html>

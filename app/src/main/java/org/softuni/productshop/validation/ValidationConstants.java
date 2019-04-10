@@ -9,4 +9,6 @@ public class ValidationConstants {
     protected final static String PASSWORDS_DO_NOT_MATCH = "Passwords don't match!";
 
     protected final static String EMAIL_ALREADY_EXISTS = "Email %s already exists";
+
+    protected final static String WRONG_PASSWORD = "Wrong password!";
 }
