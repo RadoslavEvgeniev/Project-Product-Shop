@@ -1,6 +1,5 @@
 package org.softuni.productshop.validation.category;
 
-import org.softuni.productshop.domain.entities.Category;
 import org.softuni.productshop.domain.models.binding.CategoryEditBindingModel;
 import org.softuni.productshop.repository.CategoryRepository;
 import org.softuni.productshop.validation.ValidationConstants;

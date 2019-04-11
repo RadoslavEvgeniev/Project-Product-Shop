@@ -109,9 +109,8 @@ public class CategoryController extends BaseController {
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     @PageTitle("Delete Category")
     public ModelAndView deleteCategory(@PathVariable String id, ModelAndView modelAndView) {
-        modelAndView.addObject("model",
-                this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryViewModel.class)
-        );
+        CategoryViewModel category = this.modelMapper.map(this.categoryService.findCategoryById(id), CategoryViewModel.class);
+        modelAndView.addObject("model", category);
 
         return super.view("category/delete-category", modelAndView);
     }
@@ -128,9 +127,11 @@ public class CategoryController extends BaseController {
     @PreAuthorize("hasRole('ROLE_MODERATOR')")
     @ResponseBody
     public List<CategoryViewModel> fetchCategories() {
-        return this.categoryService.findAllCategories()
+        List<CategoryViewModel> categories = this.categoryService.findAllCategories()
                 .stream()
                 .map(c -> this.modelMapper.map(c, CategoryViewModel.class))
                 .collect(Collectors.toList());
+
+        return categories;
     }
 }
